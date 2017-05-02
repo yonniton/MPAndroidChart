@@ -1,22 +1,18 @@
-
 package com.xxmassdeveloper.mpchartexample;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
-import com.github.mikephil.charting.components.Legend.LegendPosition;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.components.YAxis;
@@ -31,7 +27,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.xxmassdeveloper.mpchartexample.custom.DayAxisValueFormatter;
 import com.xxmassdeveloper.mpchartexample.custom.MyAxisValueFormatter;
@@ -40,27 +35,21 @@ import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;
 
-public class BarChartActivity extends DemoBase implements OnSeekBarChangeListener,
-        OnChartValueSelectedListener {
+public class BarChartActivity extends DemoBase
+    implements OnChartValueSelectedListener {
 
     protected BarChart mChart;
-    private SeekBar mSeekBarX, mSeekBarY;
-    private TextView tvX, tvY;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    protected void onCreate(final Bundle save) {
+        super.onCreate(save);
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
         setContentView(R.layout.activity_barchart);
 
-        tvX = (TextView) findViewById(R.id.tvXMax);
-        tvY = (TextView) findViewById(R.id.tvYMax);
-
-        mSeekBarX = (SeekBar) findViewById(R.id.seekBar1);
-        mSeekBarY = (SeekBar) findViewById(R.id.seekBar2);
-
-        mChart = (BarChart) findViewById(R.id.chart1);
+        mChart = (BarChart) findViewById(R.id.chart_humidity_weekly);
         mChart.setOnChartValueSelectedListener(this);
 
         mChart.setDrawBarShadow(false);
@@ -68,19 +57,14 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
 
         mChart.getDescription().setEnabled(false);
 
-        // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
-        mChart.setMaxVisibleValueCount(60);
-
         // scaling can now only be done on x- and y-axis separately
         mChart.setPinchZoom(false);
 
         mChart.setDrawGridBackground(false);
-        // mChart.setDrawYLabels(false);
 
-        IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(mChart);
+        final IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(mChart);
 
-        XAxis xAxis = mChart.getXAxis();
+        final XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxisPosition.BOTTOM);
         xAxis.setTypeface(mTfLight);
         xAxis.setDrawGridLines(false);
@@ -88,9 +72,9 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
         xAxis.setLabelCount(7);
         xAxis.setValueFormatter(xAxisFormatter);
 
-        IAxisValueFormatter custom = new MyAxisValueFormatter();
+        final IAxisValueFormatter custom = new MyAxisValueFormatter();
 
-        YAxis leftAxis = mChart.getAxisLeft();
+        final YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTypeface(mTfLight);
         leftAxis.setLabelCount(8, false);
         leftAxis.setValueFormatter(custom);
@@ -98,7 +82,7 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
         leftAxis.setSpaceTop(15f);
         leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
-        YAxis rightAxis = mChart.getAxisRight();
+        final YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setDrawGridLines(false);
         rightAxis.setTypeface(mTfLight);
         rightAxis.setLabelCount(8, false);
@@ -106,44 +90,31 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
         rightAxis.setSpaceTop(15f);
         rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
-        Legend l = mChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
-        l.setForm(LegendForm.SQUARE);
-        l.setFormSize(9f);
-        l.setTextSize(11f);
-        l.setXEntrySpace(4f);
-        // l.setExtra(ColorTemplate.VORDIPLOM_COLORS, new String[] { "abc",
-        // "def", "ghj", "ikl", "mno" });
-        // l.setCustom(ColorTemplate.VORDIPLOM_COLORS, new String[] { "abc",
-        // "def", "ghj", "ikl", "mno" });
+        final Legend legend = mChart.getLegend();
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setDrawInside(false);
+        legend.setForm(LegendForm.SQUARE);
+        legend.setFormSize(9f);
+        legend.setTextSize(11f);
+        legend.setXEntrySpace(4f);
 
-        XYMarkerView mv = new XYMarkerView(this, xAxisFormatter);
+        final XYMarkerView mv = new XYMarkerView(this, xAxisFormatter);
         mv.setChartView(mChart); // For bounds control
         mChart.setMarker(mv); // Set the marker to the chart
 
         setData(12, 50);
-
-        // setting data
-        mSeekBarY.setProgress(50);
-        mSeekBarX.setProgress(12);
-
-        mSeekBarY.setOnSeekBarChangeListener(this);
-        mSeekBarX.setOnSeekBarChangeListener(this);
-
-        // mChart.setDrawLegend(false);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.bar, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.actionToggleValues: {
@@ -214,44 +185,25 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
         return true;
     }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    private void setData(final int count, final float range) {
 
-        tvX.setText("" + (mSeekBarX.getProgress() + 2));
-        tvY.setText("" + (mSeekBarY.getProgress()));
+        final Resources rsrc = getResources();
+        final float start = 1f;
 
-        setData(mSeekBarX.getProgress() + 1 , mSeekBarY.getProgress());
-        mChart.invalidate();
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
-    }
-
-    private void setData(int count, float range) {
-
-        float start = 1f;
-
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+        final ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
 
         for (int i = (int) start; i < start + count + 1; i++) {
-            float mult = (range + 1);
-            float val = (float) (Math.random() * mult);
+            final float mult = (range + 1);
+            final float val = (float) (Math.random() * mult);
 
             if (Math.random() * 100 < 25) {
-                yVals1.add(new BarEntry(i, val, getResources().getDrawable(R.drawable.star)));
+                yVals1.add(new BarEntry(i, val, rsrc.getDrawable(R.drawable.star)));
             } else {
                 yVals1.add(new BarEntry(i, val));
             }
         }
 
-        BarDataSet set1;
+        final BarDataSet set1;
 
         if (mChart.getData() != null &&
                 mChart.getData().getDataSetCount() > 0) {
@@ -264,12 +216,12 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
 
             set1.setDrawIcons(false);
 
-            set1.setColors(ColorTemplate.MATERIAL_COLORS);
+            set1.setColor(rsrc.getColor(android.R.color.holo_blue_dark));
 
-            ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
+            final ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
             dataSets.add(set1);
 
-            BarData data = new BarData(dataSets);
+            final BarData data = new BarData(dataSets);
             data.setValueTextSize(10f);
             data.setValueTypeface(mTfLight);
             data.setBarWidth(0.9f);
@@ -282,14 +234,14 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
 
     @SuppressLint("NewApi")
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(final Entry e, final Highlight h) {
 
         if (e == null)
             return;
 
-        RectF bounds = mOnValueSelectedRectF;
+        final RectF bounds = mOnValueSelectedRectF;
         mChart.getBarBounds((BarEntry) e, bounds);
-        MPPointF position = mChart.getPosition(e, AxisDependency.LEFT);
+        final MPPointF position = mChart.getPosition(e, AxisDependency.LEFT);
 
         Log.i("bounds", bounds.toString());
         Log.i("position", position.toString());
