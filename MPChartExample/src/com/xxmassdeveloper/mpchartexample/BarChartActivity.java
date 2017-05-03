@@ -1,7 +1,7 @@
 package com.xxmassdeveloper.mpchartexample;
 
 import android.annotation.SuppressLint;
-import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
 import com.github.mikephil.charting.components.XAxis;
@@ -23,17 +24,27 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.MPPointF;
-import com.xxmassdeveloper.mpchartexample.custom.DayAxisValueFormatter;
-import com.xxmassdeveloper.mpchartexample.custom.MyAxisValueFormatter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.xxmassdeveloper.mpchartexample.custom.XYMarkerView;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
+import com.xxmassdeveloper.mpchartexample.notimportant.EnvironmentalHistory;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class BarChartActivity extends DemoBase
     implements OnChartValueSelectedListener {
@@ -49,11 +60,11 @@ public class BarChartActivity extends DemoBase
         );
         setContentView(R.layout.activity_barchart);
 
-        mChart = (BarChart) findViewById(R.id.chart_humidity_weekly);
+        mChart = (BarChart) findViewById(R.id.chart1);
         mChart.setOnChartValueSelectedListener(this);
 
         mChart.setDrawBarShadow(false);
-        mChart.setDrawValueAboveBar(true);
+        mChart.setDrawValueAboveBar(false);
 
         mChart.getDescription().setEnabled(false);
 
@@ -62,33 +73,44 @@ public class BarChartActivity extends DemoBase
 
         mChart.setDrawGridBackground(false);
 
-        final IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(mChart);
+        mChart.animateXY(1000, 2000);
+
+        final IAxisValueFormatter xAxisFormatter = new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(final float value, final AxisBase axis) {
+                return String.format(
+                    Locale.getDefault(),
+                    "%tY%<tm%<td_%<tH",
+                    Float.valueOf(value).longValue()
+                );
+            }
+        };
 
         final XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxisPosition.BOTTOM);
         xAxis.setTypeface(mTfLight);
-        xAxis.setDrawGridLines(false);
-        xAxis.setGranularity(1f); // only intervals of 1 day
-        xAxis.setLabelCount(7);
+        xAxis.setDrawGridLines(true);
+        xAxis.setCenterAxisLabels(true);
+        xAxis.setGranularity(
+            TimeUnit.HOURS.toMillis(24)
+        ); // only intervals of 1 day
+        xAxis.setSpaceMin(
+            TimeUnit.HOURS.toMillis(9)
+        );
+        xAxis.setSpaceMax(
+            TimeUnit.HOURS.toMillis(9)
+        );
         xAxis.setValueFormatter(xAxisFormatter);
 
-        final IAxisValueFormatter custom = new MyAxisValueFormatter();
+        mChart.getAxisRight().setEnabled(false);
 
         final YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTypeface(mTfLight);
-        leftAxis.setLabelCount(8, false);
-        leftAxis.setValueFormatter(custom);
+        leftAxis.setGranularity(1f);
+        leftAxis.setValueFormatter(new PercentFormatter(new DecimalFormat("#")));
         leftAxis.setPosition(YAxisLabelPosition.OUTSIDE_CHART);
-        leftAxis.setSpaceTop(15f);
-        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-
-        final YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setTypeface(mTfLight);
-        rightAxis.setLabelCount(8, false);
-        rightAxis.setValueFormatter(custom);
-        rightAxis.setSpaceTop(15f);
-        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setAxisMaximum(100f);
 
         final Legend legend = mChart.getLegend();
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
@@ -104,7 +126,7 @@ public class BarChartActivity extends DemoBase
         mv.setChartView(mChart); // For bounds control
         mChart.setMarker(mv); // Set the marker to the chart
 
-        setData(12, 50);
+        setData();
     }
 
     @Override
@@ -185,48 +207,72 @@ public class BarChartActivity extends DemoBase
         return true;
     }
 
-    private void setData(final int count, final float range) {
+    private void setData() {
+        try {
 
-        final Resources rsrc = getResources();
-        final float start = 1f;
+            final BufferedInputStream streamEnvHistoryWeekly = new BufferedInputStream(
+                getAssets().open("EnvironmentHistory-Weekly.json")
+            );
+            final InputStreamReader readerEnvHistoryWeekly = new InputStreamReader(streamEnvHistoryWeekly);
+            final Type typeWeeklyHistory = new TypeToken<ArrayList<EnvironmentalHistory.Weekly>>() {}.getType();
+            final Gson gson = new Gson();
+            final ArrayList<EnvironmentalHistory.Weekly> objEnvHistory = gson.fromJson(
+                readerEnvHistoryWeekly, typeWeeklyHistory
+            );
+            streamEnvHistoryWeekly.close();
 
-        final ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+            final EnvironmentalHistory.Weekly env = objEnvHistory.get(1);
+            final Calendar date = Calendar.getInstance();
+            date.setTime(env.getDate());
+            date.set(Calendar.HOUR_OF_DAY, 12);  // avoids successive dates fluctuating about midnight; we want firm Mondays, Tuesdays, etc
 
-        for (int i = (int) start; i < start + count + 1; i++) {
-            final float mult = (range + 1);
-            final float val = (float) (Math.random() * mult);
-
-            if (Math.random() * 100 < 25) {
-                yVals1.add(new BarEntry(i, val, rsrc.getDrawable(R.drawable.star)));
-            } else {
-                yVals1.add(new BarEntry(i, val));
+            final ArrayList<BarEntry> valsHumidity = new ArrayList<>();
+            for (Integer humidity : env.getHumidity()) {
+                if (humidity != null) {
+                    valsHumidity.add(new BarEntry(
+                        date.getTimeInMillis(),
+                        humidity
+                    ));
+                }
+                date.add(Calendar.DATE, 1);
             }
-        }
 
-        final BarDataSet set1;
+            final BarDataSet set1;
+            if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
+                set1 = (BarDataSet) mChart.getData().getDataSetByIndex(0);
+                set1.setValues(valsHumidity);
+                mChart.getData().notifyDataChanged();
+                mChart.notifyDataSetChanged();
+            } else {
+                set1 = new BarDataSet(
+                    valsHumidity,
+                    String.format(
+                        "Humidity for %1$tF to %2$tF",
+                        env.getDate(), // start date
+                        date           // end date
+                    )
+                );
 
-        if (mChart.getData() != null &&
-                mChart.getData().getDataSetCount() > 0) {
-            set1 = (BarDataSet) mChart.getData().getDataSetByIndex(0);
-            set1.setValues(yVals1);
-            mChart.getData().notifyDataChanged();
-            mChart.notifyDataSetChanged();
-        } else {
-            set1 = new BarDataSet(yVals1, "The year 2017");
+                set1.setDrawIcons(false);
+                set1.setDrawValues(false);
+                set1.setColor(Color.parseColor("#ff077D91"));
 
-            set1.setDrawIcons(false);
+                final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+                dataSets.add(set1);
 
-            set1.setColor(rsrc.getColor(android.R.color.holo_blue_dark));
+                final BarData data = new BarData(dataSets);
+                data.setValueTextSize(10f);
+                data.setValueTypeface(mTfLight);
+                data.setBarWidth(
+                    TimeUnit.HOURS.toMillis(16)
+                );
 
-            final ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
-            dataSets.add(set1);
+                mChart.setData(data);
+                mChart.setFitBars(true);
+            }
 
-            final BarData data = new BarData(dataSets);
-            data.setValueTextSize(10f);
-            data.setValueTypeface(mTfLight);
-            data.setBarWidth(0.9f);
-
-            mChart.setData(data);
+        } catch (final IOException e) {
+            Log.e("assets", e.toString());
         }
     }
 
