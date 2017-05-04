@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class BarChartActivity extends DemoBase
     implements OnChartValueSelectedListener {
@@ -228,18 +229,28 @@ public class BarChartActivity extends DemoBase
 
             mChart.getXAxis().setValueFormatter(xAxisFormatter);
             final MarkerView mv = new MarkerView(this, R.layout.custom_marker_view) {
+                final EnvironmentalHistory.Weekly week = env;
                 @Override
                 public void refreshContent(final Entry e, final Highlight highlight) {
+                    final Integer day_minutes = week.getUsage()
+                        .get(Float.valueOf(e.getX()).intValue());
+                    final StringBuilder sb = new StringBuilder("PURIFIER ACTIVE : ");
+                    final long hours = TimeUnit.MINUTES.toHours(day_minutes);
+                    final long minutes = day_minutes - TimeUnit.HOURS.toMinutes(hours);
+                    if (hours > 0) {
+                        sb.append(hours).append("H ");
+                    }
+                    sb.append(minutes).append('M');
                     ((TextView) findViewById(R.id.tvContent))
-                        .setText(String.format("%1.0f", e.getY()));
+                        .setText(sb);
                     super.refreshContent(e, highlight);
                 }
                 @Override
-                public MPPointF getOffset() {
+                public MPPointF getOffset() {    // position relative to bar
                     return new MPPointF(-(getWidth() / 2), -getHeight());
                 }
             };
-            mv.setChartView(mChart);   // positioned relative to the chart
+            mv.setChartView(mChart);             // position relative to chart
             mChart.setMarker(mv);
 
             final BarDataSet set1;
