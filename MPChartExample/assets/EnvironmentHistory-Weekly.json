@@ -1,0 +1,54 @@
+[
+  {
+    "Date": "2017-04-04",
+    "Aqi": [ 0.16, 0.27, 0.17, 0.47, 0.02, 0.0, 0.09 ],
+    "Temperature": [ 2962, 2965, 2965, 2965, 2952, 2954, 2962 ],
+    "Humidity": [ 59, 59, 58, 58, 60, 61, 60 ],
+    "Usage": [ 810, 474, 460, 767, 1440, 1440, 1104 ],
+    "TotalUsage": 6495,
+    "MinTemperature": 2946,
+    "MaxTemperature": 2983,
+    "MinHumidity": 56,
+    "MaxHumidity": 62,
+    "AverageAqi": 0.17
+  },
+  {
+    "Date": "2017-04-11",
+    "Aqi": [ 0.34, 0.3, 0.23, null, null, null, 0.25 ],
+    "Temperature": [ 2962, 2960, 2961, null, null, null, 2964 ],
+    "Humidity": [ 59, 61, 60, null, null, null, 60 ],
+    "Usage": [ 908, 1056, 508, null, null, null, 544 ],
+    "TotalUsage": 3016,
+    "MinTemperature": 2949,
+    "MaxTemperature": 2973,
+    "MinHumidity": 58,
+    "MaxHumidity": 66,
+    "AverageAqi": 0.28
+  },
+  {
+    "Date": "2017-04-18",
+    "Aqi": [ 0.14, 0.26, 0.31, 0.23, 0.85, 0.1, 0.39 ],
+    "Temperature": [ 2961, 2962, 2964, 2960, 2956, 2958, 2957 ],
+    "Humidity": [ 60, 60, 59, 60, 60, 60, 60 ],
+    "Usage": [ 546, 480, 154, 471, 0, 0, 898 ],
+    "TotalUsage": 2549,
+    "MinTemperature": 2950,
+    "MaxTemperature": 2980,
+    "MinHumidity": 58,
+    "MaxHumidity": 63,
+    "AverageAqi": 0.33
+  },
+  {
+    "Date": "2017-04-25",
+    "Aqi": [ 0.03, 0.09, 0.38, 0.36, 0.31, 0.1, 0.0 ],
+    "Temperature": [ 2956, 2959, 2960, 2958, 2950, null, null ],
+    "Humidity": [ 61, 59, 59, 60, 64, null, null ],
+    "Usage": [ 1108, 782, 1017, 430, 27, 0, 0 ],
+    "TotalUsage": 3364,
+    "MinTemperature": 2946,
+    "MaxTemperature": 2976,
+    "MinHumidity": 58,
+    "MaxHumidity": 64,
+    "AverageAqi": 0.16
+  }
+]
