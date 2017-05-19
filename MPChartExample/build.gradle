@@ -29,6 +29,10 @@ android {
         }
     }
 
+    dataBinding {
+        enabled = true
+    }
+
     lintOptions {
         abortOnError false
     }
@@ -64,4 +68,6 @@ dependencies {
     //compile 'io.realm:realm-android:0.87.5' // dependency for realm-database API (http://realm.io)
     //compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
     compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.guava:guava:19.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
 }
