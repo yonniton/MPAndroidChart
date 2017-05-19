@@ -3,7 +3,7 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 25
@@ -47,6 +47,7 @@ buildscript {
 }
 
 repositories {
+    maven { url 'https://maven.fabric.io/public' }
     maven { url "https://jitpack.io" }
     maven { // this is for realm-db
         url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
@@ -59,7 +60,8 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
 
     compile project(':MPChartLib')
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile "com.android.support:appcompat-v7:25.3.0"
     //compile 'io.realm:realm-android:0.87.5' // dependency for realm-database API (http://realm.io)
     //compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
+    compile 'com.google.code.gson:gson:2.8.0'
 }
