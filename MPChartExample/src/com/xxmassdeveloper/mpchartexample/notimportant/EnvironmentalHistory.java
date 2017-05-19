@@ -9,8 +9,16 @@ import java.util.List;
 /**
  * {@link com.google.gson.Gson} model for
  * a JSON Environmental History response.
+ * <p/>
+ * Contains environmental measurements taken over a period of time:
+ * <ul>
+ * <li>a {@link Date} indicates when the readings were taken</li>
+ * <li>Air Quality (periodic / average)</li>
+ * <li>Temperature (periodic / minimum / maximum)</li>
+ * <li>Humidity (periodic / average / minimum / maximum)</li>
+ * </ul>
  */
-public class EnvironmentalHistory {
+public abstract class EnvironmentalHistory {
 
     @SerializedName("Date")            private Date               mDate;
     @SerializedName("Aqi")             private ArrayList<Float>   mAqi;
@@ -23,153 +31,132 @@ public class EnvironmentalHistory {
     @SerializedName("AverageAqi")      private Float              mAverageAqi;
 
     /**
-     * <pre>
-     * ### Obtain DAILY Sample using: ###
-     *
-     * URL : https://api.cpstage.dyson.com/v1/messageprocessor/devices/NC8-UK-HHA0006A/EnvironmentDailyHistory
-     * Headers : {
-     *   Authorization=Basic ZTY0YjBiYzEtNTNiYy00YjFmLTkyOTUtMGJmZDI5ODQ1NzY5OjVjNGwyUjY0RU81RnFyRWV3TXdaTUVrWWc1M1lUUi9iYWMzMEwxU2hjRkkrOGVVTnhQWldldnp0MkxlREtYUytZTHJ6aG1Pa1ZOc1hSNWdxRWpRalp3PT0=,
-     *   Test-Session-Token=dyson_test_token_a7c53144-d066-4a67-b2d4-d11f49670b28
-     * }
-     * </pre>
+     * The date with which we associate this {@link EnvironmentalHistory} instance's readings.
+     * <p/>
+     * For {@link EnvironmentalHistoryDaily}, given the date <u>2017-04-18</u>,
+     * we expect hourly readings for <u>2017-04-18</u>
+     * from <u>00:00H</u> to <u>23:00H</u> inclusive.
+     * <p/>
+     * For {@link EnvironmentalHistoryWeekly}, given the date <u>2017-04-18</u>,
+     * we expect daily readings for the 7 days
+     * ranging from <u>2017-04-18</u> <i>(Tue)</i> to <u>2017-04-24</u> <i>(Mon)</i> inclusive.
      */
-    public static final class Daily extends EnvironmentalHistory {
-
-        @SerializedName("AverageHumidity") private Integer mAverageHumidity;
-
-        /** the date for which the day's environmental readings are associated */
-        public final Date getDate() {
-            return super.mDate;
-        }
-
-        /**
-         * Air-quality readings for each of the day's 24 hours.
-         *
-         * @see AirQualityLevel
-         */
-        public final List<Float> getAqi() {
-            return super.mAqi;
-        }
-
-        /** @see TemperatureUtils */
-        public final List<Integer> getTemperature() {
-            return super.mTemperature;
-        }
-
-        /** humidity readings (out of 100%) for each of the day's 24 hours */
-        public final List<Integer> getHumidity() {
-            return super.mHumidity;
-        }
-
-        /** minutes of recorded EC usage for each of the day's 24 hours */
-        public final List<Integer> getUsage() {
-            return super.mUsage;
-        }
-
-        /** total recorded EC usage for the day (minutes) */
-        public final Integer getTotalUsage() {
-            return super.mTotalUsage;
-        }
-
-        /** minimum recorded temperature for the day */
-        public final Integer getMinTemperature() {
-            return super.mMinTemperature;
-        }
-
-        /** maximum recorded temperature for the day */
-        public final Integer getMaxTemperature() {
-            return super.mMaxTemperature;
-        }
-
-        /** average humidity (out of 100%) for the day */
-        public final Integer getAverageHumidity() {
-            return this.mAverageHumidity;
-        }
-
-        /** average air-quality for the day */
-        public final Float getAverageAqi() {
-            return super.mAverageAqi;
-        }
+    public final Date getDate() {
+        return this.mDate;
     }
 
     /**
-     * <pre>
-     * ### Obtain WEEKLY Sample using: ###
-     *
-     * URL : https://api.cpstage.dyson.com/v1/messageprocessor/devices/NC8-UK-HHA0006A/EnvironmentWeeklyHistory
-     * Headers : {
-     *   Authorization=Basic ZTY0YjBiYzEtNTNiYy00YjFmLTkyOTUtMGJmZDI5ODQ1NzY5OjVjNGwyUjY0RU81RnFyRWV3TXdaTUVrWWc1M1lUUi9iYWMzMEwxU2hjRkkrOGVVTnhQWldldnp0MkxlREtYUytZTHJ6aG1Pa1ZOc1hSNWdxRWpRalp3PT0=,
-     *   Test-Session-Token=dyson_test_token_a7c53144-d066-4a67-b2d4-d11f49670b28
-     * }
-     * </pre>
+     * Air-quality readings for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : each of the day's 24 hours</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : each of the week's 7 days</li>
+     * </ul>
      */
-    public static final class Weekly extends EnvironmentalHistory {
-
-        @SerializedName("MinHumidity") private Integer mMinHumidity;
-        @SerializedName("MaxHumidity") private Integer mMaxHumidity;
-
-        /**
-         * The date for which the week's environmental readings are associated.
-         * Given the date {@code 2017-04-18}, the week is defined as
-         * the 7 days ranging from {@code 2017-04-18} <i>(Tue)</i>
-         * to {@code 2017-04-24} <i>(Mon)</i> inclusive.
-         */
-        public final Date getDate() {
-            return super.mDate;
-        }
-
-        /**
-         * Air-quality readings for each of the week's 7 days.
-         *
-         * @see AirQualityLevel
-         */
-        public final List<Float> getAqi() {
-            return super.mAqi;
-        }
-
-        /** @see TemperatureUtils */
-        public final List<Integer> getTemperature() {
-            return super.mTemperature;
-        }
-
-        /** humidity readings (out of 100%) for each of the week's 7 days */
-        public final List<Integer> getHumidity() {
-            return super.mHumidity;
-        }
-
-        /** recorded EC usage for each of the week's 7 days (minutes) */
-        public final List<Integer> getUsage() {
-            return super.mUsage;
-        }
-
-        /** total recorded EC usage for the week (minutes) */
-        public final Integer getTotalUsage() {
-            return super.mTotalUsage;
-        }
-
-        /** minimum recorded temperature for the week */
-        public final Integer getMinTemperature() {
-            return super.mMinTemperature;
-        }
-
-        /** maximum recorded temperature for the week */
-        public final Integer getMaxTemperature() {
-            return super.mMaxTemperature;
-        }
-
-        /** minimum recorded humidity (out of 100%) for the week */
-        public final Integer getMinHumidity() {
-            return this.mMinHumidity;
-        }
-
-        /** maximum recorded humidity (out of 100%) for the week */
-        public final Integer getMaxHumidity() {
-            return this.mMaxHumidity;
-        }
-
-        /** average air-quality for the week */
-        public final Float getAverageAqi() {
-            return super.mAverageAqi;
-        }
+    public final List<Float> getAqi() {
+        return this.mAqi;
     }
+
+    /**
+     * Temperature readings for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : each of the day's 24 hours</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : each of the week's 7 days</li>
+     * </ul>
+     */
+    public final List<Integer> getTemperature() {
+        return this.mTemperature;
+    }
+
+    /**
+     * Humidity readings (out of 100%) for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : each of the day's 24 hours</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : each of the week's 7 days</li>
+     * </ul>
+     */
+    public final List<Integer> getHumidity() {
+        return this.mHumidity;
+    }
+
+    /**
+     * Minutes of recorded EC usage for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : each of the day's 24 hours</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : each of the week's 7 days</li>
+     * </ul>
+     */
+    public final List<Integer> getUsage() {
+        return this.mUsage;
+    }
+
+    /**
+     * Total recorded EC usage (in minutes) for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : the day</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : the week</li>
+     * </ul>
+     */
+    public final Integer getTotalUsage() {
+        return this.mTotalUsage;
+    }
+
+    /**
+     * Average air-quality for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : the day</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : the week</li>
+     * </ul>
+     */
+    public final Float getAverageAqi() {
+        return this.mAverageAqi;
+    }
+
+    /**
+     * Minimum recorded temperature for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : the day</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : the week</li>
+     * </ul>
+     */
+    public final Integer getMinTemperature() {
+        return this.mMinTemperature;
+    }
+
+    /**
+     * Maximum recorded temperature for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : the day</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : the week</li>
+     * </ul>
+     */
+    public final Integer getMaxTemperature() {
+        return this.mMaxTemperature;
+    }
+
+    /**
+     * Average humidity (out of 100%) for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : each of the day's 24 hours</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : each of the week's 7 days</li>
+     * </ul>
+     */
+    public abstract Integer getAverageHumidity();
+
+    /**
+     * Minimum recorded humidity (out of 100%) for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : each of the day's 24 hours</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : each of the week's 7 days</li>
+     * </ul>
+     */
+    public abstract Integer getMinHumidity();
+
+    /**
+     * Maximum recorded humidity (out of 100%) for:
+     * <ul>
+     * <li>{@link EnvironmentalHistoryDaily} : each of the day's 24 hours</li>
+     * <li>{@link EnvironmentalHistoryWeekly} : each of the week's 7 days</li>
+     * </ul>
+     */
+    public abstract Integer getMaxHumidity();
 }
