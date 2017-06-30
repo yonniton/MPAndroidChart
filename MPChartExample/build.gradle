@@ -3,7 +3,7 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 25
@@ -43,7 +43,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha8'
         //classpath 'io.realm:realm-gradle-plugin:0.88.2'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -59,15 +59,15 @@ repositories {
 }
 
 dependencies {
-    //compile fileTree(dir: 'libs', include: ['*.jar'])
-    //compile project(':MPChartLib-Realm') // clone "https://github.com/PhilJay/MPAndroidChart-Realm" to get this or uncomment the gradle dependency below:
-    compile 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
+    //implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //implementation project(':MPChartLib-Realm') // clone "https://github.com/PhilJay/MPAndroidChart-Realm" to get this or uncomment the gradle dependency below:
+    implementation 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
 
-    compile project(':MPChartLib')
-    compile "com.android.support:appcompat-v7:25.3.0"
-    //compile 'io.realm:realm-android:0.87.5' // dependency for realm-database API (http://realm.io)
-    //compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.google.guava:guava:19.0'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
+    implementation project(':MPChartLib')
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    //implementation 'io.realm:realm-android:0.87.5' // dependency for realm-database API (http://realm.io)
+    //implementation 'com.github.PhilJay:MPAndroidChart:v2.2.5'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.guava:guava:19.0'
+    implementation "io.reactivex.rxjava2:rxjava:2.1.1"
 }
