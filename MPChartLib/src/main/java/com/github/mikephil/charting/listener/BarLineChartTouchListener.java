@@ -2,7 +2,6 @@ package com.github.mikephil.charting.listener;
 
 import android.annotation.SuppressLint;
 import android.graphics.Matrix;
-import android.graphics.PointF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -32,12 +31,12 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
     /**
      * the original touch-matrix from the chart
      */
-    private Matrix mMatrix = new Matrix();
+    protected Matrix mMatrix = new Matrix();
 
     /**
      * matrix for saving the original matrix state
      */
-    private Matrix mSavedMatrix = new Matrix();
+    protected Matrix mSavedMatrix = new Matrix();
 
     /**
      * point where the touch action started
@@ -47,11 +46,11 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
     /**
      * center between two pointers (fingers on the display)
      */
-    private MPPointF mTouchPointCenter = MPPointF.getInstance(0,0);
+    protected MPPointF mTouchPointCenter = MPPointF.getInstance(0,0);
 
-    private float mSavedXDist = 1f;
-    private float mSavedYDist = 1f;
-    private float mSavedDist = 1f;
+    protected float mSavedXDist = 1f;
+    protected float mSavedYDist = 1f;
+    protected float mSavedDist = 1f;
 
     private IDataSet mClosestDataSetToTouch;
 
@@ -72,7 +71,7 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
     /**
      * the minimum distance between the pointers that will trigger a zoom gesture
      */
-    private float mMinScalePointerDistance;
+    protected float mMinScalePointerDistance;
 
     /**
      * Constructor with initialization parameters.
@@ -342,7 +341,7 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
      *
      * @param event
      */
-    private void performZoom(MotionEvent event) {
+    protected void performZoom(MotionEvent event) {
 
         if (event.getPointerCount() >= 2) { // two finger zoom
 
@@ -474,7 +473,7 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
      * @param event
      * @return
      */
-    private static float spacing(MotionEvent event) {
+    protected static float spacing(MotionEvent event) {
         float x = event.getX(0) - event.getX(1);
         float y = event.getY(0) - event.getY(1);
         return (float) Math.sqrt(x * x + y * y);
@@ -487,7 +486,7 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
      * @param e
      * @return
      */
-    private static float getXDist(MotionEvent e) {
+    protected static float getXDist(MotionEvent e) {
         float x = Math.abs(e.getX(0) - e.getX(1));
         return x;
     }
@@ -499,7 +498,7 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
      * @param e
      * @return
      */
-    private static float getYDist(MotionEvent e) {
+    protected static float getYDist(MotionEvent e) {
         float y = Math.abs(e.getY(0) - e.getY(1));
         return y;
     }
